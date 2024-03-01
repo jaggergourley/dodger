@@ -1,3 +1,6 @@
+const playerCoords = document.getElementById("playerCoords");
+const ballCoords = document.getElementById("ballCoords");
+
 const canvas = document.getElementById("myCanvas");
 const ctx = canvas.getContext("2d");
 
@@ -56,7 +59,20 @@ function incrementSeconds() {
   score += 0.1;
 }
 
-function collisionDetection() {}
+// how will we detect collision? It should be that if the player + radius
+// we have our general x and y of the ball flying, so can compare to player
+// collision occurs when playerX and playerY are within the radius distance of the ball and player radius
+// when their x, y coordinates are within 20 of each other in any direction.
+// so we can find distance between x, y and if less than 20, it is a hit
+function collisionDetection() {
+  // sqrt((x2-x1)^2 + (y2-y1)^2)
+  let distance = Math.sqrt((playerX - x) ** 2 + (playerY - y) ** 2);
+  if (distance < playerRadius + ballRadius) {
+    alert("Game Over");
+    document.location.reload();
+    clearInterval(interval);
+  }
+}
 
 function drawPlayer() {
   ctx.beginPath();
@@ -90,6 +106,9 @@ function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   drawPlayer();
   drawScore();
+  collisionDetection();
+  playerCoords.innerHTML = playerX + ", " + playerY;
+  ballCoords.innerHTML = x + ", " + y;
 
   x += dx;
   y += dy;
@@ -119,7 +138,7 @@ function draw() {
 }
 
 function startGame() {
-  let drawInterval = setInterval(draw, 5); // draw() executed every 10 milliseconds
+  let drawInterval = setInterval(draw, 33); // draw() executed every 10 milliseconds
   let timeInterval = setInterval(incrementSeconds, 100);
 }
 
@@ -131,4 +150,13 @@ document.getElementById("startButton").addEventListener("click", function () {
 /* to implement:
 - render objects that will fly across screen
 - collision detection (maybe add lives)
+*/
+
+/*
+- need a way to generate more objects (possibly of different types) from all directions
+- want game to get progressively harder
+- be able to detect collision with each object that's in canvas
+- get rid of object when no longer in canvas
+- guessing we will need array of some kind to store each object in canvas
+- check for collision in each frame with any of the objects
 */
